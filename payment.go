@@ -165,11 +165,12 @@ func (res response) Check() error {
 
 // PaidResponse 支付返回面向用户的集合
 type PaidResponse struct {
-	AppID    string `xml:"appid"` // 小程序ID
-	MchID    string `xml:"mch_id"`
-	PrePayID string `xml:"prepay_id"`
-	Sign     string `xml:"sign"`
-	NonceStr string `xml:"nonce_str"`
+	AppID    string  `xml:"appid"` // 小程序ID
+	MchID    string  `xml:"mch_id"`
+	PrePayID string  `xml:"prepay_id"`
+	CodeURL  *string `xml:"code_url"`
+	Sign     string  `xml:"sign"`
+	NonceStr string  `xml:"nonce_str"`
 }
 
 // paidResponse 支付返回集合
