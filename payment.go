@@ -45,6 +45,7 @@ type Order struct {
 
 	// 选填 ...
 	IP        string    `xml:"spbill_create_ip,omitempty"` // 终端IP
+	ProductID string    `xml:"product_id,omitempty"`       // trade_type=NATIVE时，此参数必传。此参数为二维码中包含的商品ID，商户自行定义。
 	NoCredit  bool      `xml:"-"`                          // 上传此参数 no_credit 可限制用户不能使用信用卡支付
 	StartedAt time.Time `xml:"-"`                          // 交易起始时间 格式为yyyyMMddHHmmss
 	ExpiredAt time.Time `xml:"-"`                          // 交易结束时间 订单失效时间 格式为yyyyMMddHHmmss
@@ -99,6 +100,10 @@ func (o *Order) prepare(key string) (order, error) {
 		od.IP = ip.String()
 	}
 	signData["spbill_create_ip"] = od.IP
+
+	if o.ProductID != "" {
+		signData["product_id"] = od.ProductID
+	}
 
 	if !o.StartedAt.IsZero() {
 		od.StartedAt = o.StartedAt.Format(paymentTimeFormat)
