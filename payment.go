@@ -35,13 +35,14 @@ type Params struct {
 // Order 商户统一订单
 type Order struct {
 	// 必填 ...
-	AppID      string `xml:"appid"`        // 小程序ID
+	AppID      string `xml:"appid"`        // 微信ID
 	MchID      string `xml:"mch_id"`       // 商户号
 	TotalFee   int    `xml:"total_fee"`    // 标价金额
 	NotifyURL  string `xml:"notify_url"`   // 异步接收微信支付结果通知的回调地址，通知url必须为外网可访问的url，不能携带参数。
 	OpenID     string `xml:"openid"`       // 下单用户ID
 	Body       string `xml:"body"`         // 商品描述
 	OutTradeNo string `xml:"out_trade_no"` // 商户订单号
+	TradeType  string `xml:"trade_type"`   // JSAPI -JSAPI支付 NATIVE -Native支付 APP -APP支付
 
 	// 选填 ...
 	IP        string    `xml:"spbill_create_ip,omitempty"` // 终端IP
@@ -58,10 +59,9 @@ type Order struct {
 type order struct {
 	XMLName xml.Name `xml:"xml"`
 	Order
-	Sign      string `xml:"sign"`                // 签名
-	NonceStr  string `xml:"nonce_str"`           // 随机字符串
-	TradeType string `xml:"trade_type"`          // 小程序取值如下: JSAPI
-	SignType  string `xml:"sign_type,omitempty"` // 签名类型: 目前支持HMAC-SHA256和MD5，默认为MD5
+	Sign     string `xml:"sign"`                // 签名
+	NonceStr string `xml:"nonce_str"`           // 随机字符串
+	SignType string `xml:"sign_type,omitempty"` // 签名类型: 目前支持HMAC-SHA256和MD5，默认为MD5
 
 	NoCredit  string `xml:"limit_pay,omitempty"`   // 上传此参数 no_credit 可限制用户不能使用信用卡支付
 	StartedAt string `xml:"time_start,omitempty"`  // 交易起始时间 格式为yyyyMMddHHmmss
@@ -72,10 +72,13 @@ type order struct {
 func (o *Order) prepare(key string) (order, error) {
 
 	od := order{
-		Order:     *o,
-		TradeType: "JSAPI",
-		SignType:  "MD5",
-		NonceStr:  util.RandomString(32),
+		Order:    *o,
+		SignType: "MD5",
+		NonceStr: util.RandomString(32),
+	}
+
+	if od.TradeType == "" {
+		od.TradeType = "JSAPI"
 	}
 
 	signData := map[string]string{
