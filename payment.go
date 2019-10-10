@@ -83,8 +83,6 @@ func (o *Order) prepare(key string) (order, error) {
 		"body":         od.Body,
 		"mch_id":       od.MchID,
 		"nonce_str":    od.NonceStr,
-		"notify_url":   od.NotifyURL,
-		"openid":       od.OpenID,
 		"out_trade_no": od.OutTradeNo,
 		"total_fee":    strconv.Itoa(od.TotalFee),
 		"trade_type":   od.TradeType,
@@ -103,6 +101,12 @@ func (o *Order) prepare(key string) (order, error) {
 
 	if o.ProductID != "" {
 		signData["product_id"] = od.ProductID
+	}
+	if o.NotifyURL != "" {
+		signData["notify_url"] = od.NotifyURL
+	}
+	if o.OpenID != "" {
+		signData["openid"] = od.OpenID
 	}
 
 	if !o.StartedAt.IsZero() {
